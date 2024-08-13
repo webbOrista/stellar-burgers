@@ -14,10 +14,10 @@ import { FeedSlice } from './slices/feedSlice';
 const rootReducer = {
   [IngredientsSlice.name]: IngredientsSlice.reducer,
   [BurgerConstructorSlice.name]: BurgerConstructorSlice.reducer,
-  [UserSlice.name]:UserSlice.reducer,
-  [OrderSlice.name]:OrderSlice.reducer,
-  [FeedSlice.name]:FeedSlice.reducer,
-}; 
+  [UserSlice.name]: UserSlice.reducer,
+  [OrderSlice.name]: OrderSlice.reducer,
+  [FeedSlice.name]: FeedSlice.reducer
+};
 
 const store = configureStore({
   reducer: rootReducer,

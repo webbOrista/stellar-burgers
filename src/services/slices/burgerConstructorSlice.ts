@@ -1,6 +1,3 @@
-
-
-
 import { orderBurgerApi } from '@api';
 import {
   createSlice,
@@ -8,14 +5,17 @@ import {
   createAsyncThunk,
   nanoid
 } from '@reduxjs/toolkit';
-import { ERequestStatus, TConstructorIngredient, TOrder } from '@utils-types';
-
+import {
+  ERequestStatus,
+  TConstructorIngredient,
+  TIngredient,
+  TOrder
+} from '@utils-types';
 
 export const submitOrder = createAsyncThunk(
   'burgerConstructor/submitOrder',
   (ingredients: string[]) => orderBurgerApi(ingredients)
 );
-
 
 type TBurgerConstructorState = {
   constructorItems: {
@@ -50,29 +50,48 @@ export const BurgerConstructorSlice = createSlice({
         }
       },
       // Присвоение ID ингридиенту перед добавлением в бургер, чтобы отличить от аналогичных ингридиентов
-      prepare: (ingredient: TConstructorIngredient) => {
-        const ingredientId = nanoid();
-        return { payload: { ...ingredient, ingredientId } };
+      prepare: (ingredient: TIngredient) => {
+        const id = nanoid();
+        return { payload: { ...ingredient, id } };
       }
     },
-    removeIngredient: (state, { payload }: PayloadAction<number>) => {
-      state.constructorItems.ingredients.splice(payload, 1);
+    removeIngredient: (state, action: PayloadAction<string>) => {
+      state.constructorItems.ingredients =
+        state.constructorItems.ingredients.filter(
+          (ingredient) => ingredient.id !== action.payload
+        );
     },
-     // Перемещение ингридиента выше/ниже в бургере
-    moveIngredient: (
+    moveIngredientUp: (
       state,
-      { payload }: PayloadAction<{ from: number; to: number }>
+      action: PayloadAction<TConstructorIngredient>
     ) => {
-      const { from, to } = payload;
-      const movedIngredients = [...state.constructorItems.ingredients];
-
-      movedIngredients.splice(to, 0, movedIngredients.splice(from, 1)[0]);
-      state.constructorItems.ingredients = movedIngredients;
+      const currentIndex = state.constructorItems.ingredients.findIndex(
+        (item) => item._id === action.payload._id
+      );
+      if (currentIndex > 0) {
+        state.constructorItems.ingredients[currentIndex] =
+          state.constructorItems.ingredients[currentIndex - 1];
+        state.constructorItems.ingredients[currentIndex - 1] = action.payload;
+      }
+    },
+    // Методы для перемещения ингридиентов выше/ниже в бургере
+    moveIngredientDown: (
+      state,
+      action: PayloadAction<TConstructorIngredient>
+    ) => {
+      const currentIndex = state.constructorItems.ingredients.findIndex(
+        (item) => item._id === action.payload._id
+      );
+      if (currentIndex < state.constructorItems.ingredients.length - 1) {
+        state.constructorItems.ingredients[currentIndex] =
+          state.constructorItems.ingredients[currentIndex + 1];
+        state.constructorItems.ingredients[currentIndex + 1] = action.payload;
+      }
     },
     clearIngredients: (state) => {
-      state.constructorItems.bun = null;
-      state.constructorItems.ingredients = [];
-    },
+      (state.constructorItems.bun = null),
+        (state.constructorItems.ingredients = []);
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(submitOrder.pending, (state) => {
@@ -96,9 +115,16 @@ export const BurgerConstructorSlice = createSlice({
     getConstructorItems: (state) => state.constructorItems,
     getOrderRequest: (state) => state.orderRequest,
     getOrderModalData: (state) => state.orderModalData,
-    getOrderStatus:(state)=>state.status,
+    getOrderStatus: (state) => state.status,
+    getBurgerConstructorState: (state) => state
   }
 });
 
 export const BurgerConstructorSelector = BurgerConstructorSlice.selectors;
-export const BurgerConstructorActions = BurgerConstructorSlice.actions;
+export const {
+  addIngredient,
+  removeIngredient,
+  moveIngredientUp,
+  moveIngredientDown,
+  clearIngredients
+} = BurgerConstructorSlice.actions;

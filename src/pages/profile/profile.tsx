@@ -5,7 +5,7 @@ import { useSelector } from '../../services/store';
 
 export const Profile: FC = () => {
   /** DONE: взять переменную из стора */
-  const user = useSelector(UserSelector.userDataSelector)
+  const user = useSelector(UserSelector.userDataSelector);
 
   const [formValue, setFormValue] = useState({
     name: user?.name || '',
@@ -55,5 +55,4 @@ export const Profile: FC = () => {
       handleInputChange={handleInputChange}
     />
   );
-
 };

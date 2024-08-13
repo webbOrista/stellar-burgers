@@ -3,33 +3,27 @@ import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient } from '@utils-types';
 import { useDispatch, useSelector } from '../../services/store';
-import { IngredientsSelector } from '../../services/slices/ingredientsSlice'; 
-import { getOrderByNumber, orderDataSelector } from '../../services/slices/orderSlice';
+import { IngredientsSelector } from '../../services/slices/ingredientsSlice';
+import {
+  getOrderByNumber,
+  orderDataSelector
+} from '../../services/slices/orderSlice';
 import { useParams } from 'react-router-dom';
 
 export const OrderInfo: FC = () => {
   /** DONE: взять переменные orderData и ingredients из стора */
-  const orderData = useSelector(orderDataSelector)
-  const id = useParams<{number:string}>()
+  const orderData = useSelector(orderDataSelector);
+  const id = useParams().number;
   const dispatch = useDispatch();
 
-  useEffect(()=>{
-    dispatch(getOrderByNumber(Number(id)))
-  }),[dispatch,id]
-  
-  // {
-  //   createdAt: '',
-  //   ingredients: [],
-  //   _id: '',
-  //   status: '',
-  //   name: '',
-  //   updatedAt: 'string',
-  //   number: 0
-  // };
+  useEffect(() => {
+    dispatch(getOrderByNumber(Number(id)));
+  }),
+    [dispatch, id];
 
-
-
-  const ingredients: TIngredient[] = useSelector(IngredientsSelector.IngredientsDataSelector);
+  const ingredients: TIngredient[] = useSelector(
+    IngredientsSelector.IngredientsDataSelector
+  );
 
   /* Готовим данные для отображения */
   const orderInfo = useMemo(() => {
