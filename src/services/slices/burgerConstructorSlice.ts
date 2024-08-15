@@ -1,29 +1,22 @@
-import { orderBurgerApi } from '@api';
 import {
   createSlice,
   PayloadAction,
-  createAsyncThunk,
   nanoid
 } from '@reduxjs/toolkit';
 import {
   ERequestStatus,
   TConstructorIngredient,
   TIngredient,
-  TOrder
 } from '@utils-types';
 
-export const submitOrder = createAsyncThunk(
-  'burgerConstructor/submitOrder',
-  (ingredients: string[]) => orderBurgerApi(ingredients)
-);
+
+
 
 type TBurgerConstructorState = {
   constructorItems: {
     bun: TConstructorIngredient | null;
     ingredients: TConstructorIngredient[];
   };
-  orderRequest: boolean;
-  orderModalData: TOrder | null;
   status: ERequestStatus;
 };
 
@@ -32,8 +25,6 @@ const initialState: TBurgerConstructorState = {
     bun: null,
     ingredients: []
   },
-  orderRequest: false,
-  orderModalData: null,
   status: ERequestStatus.Idle
 };
 
@@ -93,34 +84,19 @@ export const BurgerConstructorSlice = createSlice({
         (state.constructorItems.ingredients = []);
     }
   },
-  extraReducers: (builder) => {
-    builder.addCase(submitOrder.pending, (state) => {
-      state.status = ERequestStatus.Loading;
-    });
-    builder.addCase(submitOrder.fulfilled, (state, action) => {
-      state.status = ERequestStatus.Success;
-      state.orderRequest = false;
-      state.orderModalData = action.payload.order;
-      state.constructorItems = {
-        bun: null,
-        ingredients: []
-      };
-    });
-    builder.addCase(submitOrder.rejected, (state) => {
-      state.status = ERequestStatus.Failed;
-    });
-  },
-
   selectors: {
     getConstructorItems: (state) => state.constructorItems,
-    getOrderRequest: (state) => state.orderRequest,
-    getOrderModalData: (state) => state.orderModalData,
     getOrderStatus: (state) => state.status,
-    getBurgerConstructorState: (state) => state
+    getBurgerConstructorState: (state) => state,
   }
 });
 
-export const BurgerConstructorSelector = BurgerConstructorSlice.selectors;
+export const {
+  getConstructorItems,
+  getOrderStatus,
+  getBurgerConstructorState
+
+} = BurgerConstructorSlice.selectors;
 export const {
   addIngredient,
   removeIngredient,

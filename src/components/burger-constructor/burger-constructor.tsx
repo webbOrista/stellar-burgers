@@ -3,23 +3,18 @@ import { TConstructorIngredient } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
 import { useDispatch, useSelector } from '../../services/store';
 import {
-  clearIngredients,
-  BurgerConstructorSelector,
-  submitOrder
+  clearIngredients, getConstructorItems
+  
 } from '../../services/slices/burgerConstructorSlice';
 import { useNavigate } from 'react-router-dom';
 import { UserSelector } from '../../services/slices/userSlice';
-import { clearOrder } from '../../services/slices/orderSlice';
+import { clearOrder, orderDataSelector,orderRequestSelector, submitOrder } from '../../services/slices/orderSlice';
 
 export const BurgerConstructor: FC = () => {
   //DONE: взять переменные constructorItems, orderRequest и orderModalData из стора
-  const orderRequest = useSelector(BurgerConstructorSelector.getOrderRequest);
-  const orderModalData = useSelector(
-    BurgerConstructorSelector.getOrderModalData
-  );
-  const constructorItems = useSelector(
-    BurgerConstructorSelector.getConstructorItems
-  );
+  const orderRequest = useSelector(orderRequestSelector);
+  const orderModalData = useSelector(orderDataSelector);
+  const constructorItems = useSelector(getConstructorItems);
 
   const dispatch = useDispatch();
   const isAuthenticated = useSelector(UserSelector.isAuthenticatedSelector);
@@ -40,6 +35,8 @@ export const BurgerConstructor: FC = () => {
       ])
     );
   };
+
+
 
   const closeOrderModal = () => {
     dispatch(clearIngredients());
