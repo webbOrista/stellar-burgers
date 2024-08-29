@@ -1,6 +1,10 @@
-import { getOrderByNumberApi, getOrdersApi, orderBurgerApi } from '@api';
+import {
+  getOrderByNumberApi,
+  getOrdersApi,
+  orderBurgerApi
+} from './../../../utils/burger-api';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { ERequestStatus, TOrder } from '@utils-types';
+import { TOrder } from './../../../utils/types';
 
 export const submitOrder = createAsyncThunk(
   'order/submit',
@@ -26,12 +30,14 @@ type TOrdersState = {
   orders: TOrder[]; // Список всех заказов
   order: TOrder | null; // Текущий заказ, отображаемый в модальном окне
   loadingStatus: boolean;
+  error?: string | null;
 };
 
-const initialState: TOrdersState = {
+export const initialState: TOrdersState = {
   orders: [],
   order: null,
-  loadingStatus: false
+  loadingStatus: false,
+  error: null
 };
 
 export const OrderSlice = createSlice({
@@ -46,43 +52,50 @@ export const OrderSlice = createSlice({
     builder
       .addCase(submitOrder.pending, (state) => {
         state.loadingStatus = true;
+        state.error = null;
       })
       .addCase(submitOrder.fulfilled, (state, action) => {
         state.loadingStatus = false;
         state.order = action.payload.order;
-        
+        state.error = null;
       })
-      .addCase(submitOrder.rejected, (state) => {
+      .addCase(submitOrder.rejected, (state, action) => {
         state.loadingStatus = false;
+        state.error = action.error.message;
       })
       .addCase(getOrders.pending, (state) => {
         state.loadingStatus = true;
+        state.error = null;
       })
       .addCase(getOrders.fulfilled, (state, action) => {
-        state.loadingStatus = false,
-        state.orders = action.payload
+        (state.loadingStatus = false), (state.orders = action.payload);
       })
-      .addCase(getOrders.rejected, (state) => {
-        state.loadingStatus= false;
+      .addCase(getOrders.rejected, (state, action) => {
+        state.loadingStatus = false;
+        state.error = action.error.message;
       })
       .addCase(getOrderByNumber.pending, (state) => {
-        state.loadingStatus= true;
+        state.loadingStatus = true;
+        state.error = null;
       })
       .addCase(getOrderByNumber.fulfilled, (state, action) => {
-        state.loadingStatus = false,          
-        state.order = action.payload.orders[0]
+        (state.loadingStatus = false), (state.order = action.payload.orders[0]);
+        state.error = null;
       })
-      .addCase(getOrderByNumber.rejected, (state) => {
+      .addCase(getOrderByNumber.rejected, (state, action) => {
         state.loadingStatus = false;
+        state.error = action.error.message;
       });
   },
   selectors: {
     orderDataSelector: (state) => state.order, // Селектор для получения текущего заказа
-    orderRequestSelector:(state) => state.loadingStatus,  // Селектор для проверки статуса ответа сервера на запрос
-    ordersSelector: (state) => state.orders, // Селектор для получения списка всех заказов
+    orderRequestSelector: (state) => state.loadingStatus, // Селектор для проверки статуса ответа сервера на запрос
+    ordersSelector: (state) => state.orders // Селектор для получения списка всех заказов
   }
 });
 
-export const { orderDataSelector, orderRequestSelector, ordersSelector} =
+export const { orderDataSelector, orderRequestSelector, ordersSelector } =
   OrderSlice.selectors;
 export const { clearOrder } = OrderSlice.actions;
+
+export const OrderSliceReducer = OrderSlice.reducer;

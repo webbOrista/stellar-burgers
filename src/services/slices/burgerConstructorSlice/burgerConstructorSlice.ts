@@ -1,18 +1,11 @@
-import {
-  createSlice,
-  PayloadAction,
-  nanoid
-} from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, nanoid } from '@reduxjs/toolkit';
 import {
   ERequestStatus,
   TConstructorIngredient,
-  TIngredient,
-} from '@utils-types';
+  TIngredient
+} from './../../../utils/types';
 
-
-
-
-type TBurgerConstructorState = {
+export type TBurgerConstructorState = {
   constructorItems: {
     bun: TConstructorIngredient | null;
     ingredients: TConstructorIngredient[];
@@ -20,7 +13,7 @@ type TBurgerConstructorState = {
   status: ERequestStatus;
 };
 
-const initialState: TBurgerConstructorState = {
+export const initialState: TBurgerConstructorState = {
   constructorItems: {
     bun: null,
     ingredients: []
@@ -87,7 +80,7 @@ export const BurgerConstructorSlice = createSlice({
   selectors: {
     getConstructorItems: (state) => state.constructorItems,
     getOrderStatus: (state) => state.status,
-    getBurgerConstructorState: (state) => state,
+    getBurgerConstructorState: (state) => state
   }
 });
 
@@ -95,7 +88,6 @@ export const {
   getConstructorItems,
   getOrderStatus,
   getBurgerConstructorState
-
 } = BurgerConstructorSlice.selectors;
 export const {
   addIngredient,
@@ -104,3 +96,5 @@ export const {
   moveIngredientDown,
   clearIngredients
 } = BurgerConstructorSlice.actions;
+
+export const BurgerConstructorReducer = BurgerConstructorSlice.reducer;

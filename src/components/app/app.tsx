@@ -27,10 +27,10 @@ import { IngredientDetails, Modal, OrderInfo } from '@components';
 
 import { ProtectedRoute } from '../../components/protected-route/ProtectedRoute';
 
-import { useDispatch } from '../../services/store';
+import { useDispatch } from '../../services/store/store';
 import { useEffect } from 'react';
-import { getIngredients } from '../../services/slices/ingredientsSlice';
-import { getUser } from '../../services/slices/userSlice';
+import { getIngredients } from '../../services/slices/ingredientsSlice/ingredientsSlice';
+import { getUser } from '../../services/slices/userSlice/userSlice';
 
 const App = () => {
   const navigate = useNavigate();
