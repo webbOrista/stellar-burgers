@@ -6,7 +6,6 @@ import { logoutUser } from '../../services/slices/userSlice/userSlice';
 
 export const ProfileMenu: FC = () => {
   const { pathname } = useLocation();
-  //DONE:добавить логаут и возврат на главную
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleLogout = () => {

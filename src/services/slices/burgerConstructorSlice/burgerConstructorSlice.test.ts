@@ -36,7 +36,7 @@ describe('Проверка работы BurgerConstructorSlice', () => {
     state = BurgerConstructorSliceInitialState;
   });
 
-  test('Ингридиенты в конструкторе добавляются корректно', () => {
+  test('Ингредиенты в конструкторе добавляются корректно', () => {
     const action = addIngredient(IngredientStub);
     state = BurgerConstructorReducer(state, action);
     expect(state.constructorItems.ingredients[0]).toMatchObject({
@@ -45,7 +45,7 @@ describe('Проверка работы BurgerConstructorSlice', () => {
     });
   });
 
-  test('Ингридиенты в конструкторе удаляются корректно', () => {
+  test('Ингредиенты в конструкторе удаляются корректно', () => {
     const prepareAction = addIngredient(IngredientStub);
     state = BurgerConstructorReducer(state, prepareAction);
 
@@ -53,7 +53,7 @@ describe('Проверка работы BurgerConstructorSlice', () => {
     state = BurgerConstructorReducer(state, action);
     expect(state.constructorItems.ingredients).toEqual([]);
   }),
-    describe('Изменение порядка ингридиентов в конструкторе работает корректно', () => {
+    describe('Изменение порядка ингредиентов в конструкторе работает корректно', () => {
       beforeEach(() => {
         state = BurgerConstructorReducer(state, addIngredient(IngredientStub));
         state = BurgerConstructorReducer(
@@ -62,8 +62,8 @@ describe('Проверка работы BurgerConstructorSlice', () => {
         );
       });
 
-      test('Перемещение ингридиента вниз работает корректно', () => {
-        // экшн перемещения ингридиента (перемещаем один ингридиент ниже, Index должен измениться с 0 на 1)
+      test('Перемещение ингредиента вниз работает корректно', () => {
+        // экшн перемещения ингредиента (перемещаем один ингредиент ниже, Index должен измениться с 0 на 1)
 
         const action = moveIngredientDown(
           state.constructorItems.ingredients[0]
@@ -78,7 +78,7 @@ describe('Проверка работы BurgerConstructorSlice', () => {
       });
 
       // сработал beforeEach, тест не связан с результатом предыдущего
-      test('Перемещение ингридиента вверх работает корректно', () => {
+      test('Перемещение ингредиента вверх работает корректно', () => {
         const action = moveIngredientUp(state.constructorItems.ingredients[1]);
         state = BurgerConstructorReducer(state, action);
         expect(state.constructorItems.ingredients[0]._id).toEqual(

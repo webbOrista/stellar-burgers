@@ -6,7 +6,7 @@ import {
   IngredientsSliceReducer
 } from './ingredientsSlice';
 
-// Мокируем запрос ингридиентов
+// Мокируем запрос ингредиентов
 
 jest.mock('./../../../utils/burger-api', () => ({
   getIngredientsApi: jest.fn()

@@ -16,7 +16,6 @@ import {
 } from '../../services/slices/orderSlice/orderSlice';
 
 export const BurgerConstructor: FC = () => {
-  //DONE: взять переменные constructorItems, orderRequest и orderModalData из стора
   const orderRequest = useSelector(orderRequestSelector);
   const orderModalData = useSelector(orderDataSelector);
   const constructorItems = useSelector(getConstructorItems);

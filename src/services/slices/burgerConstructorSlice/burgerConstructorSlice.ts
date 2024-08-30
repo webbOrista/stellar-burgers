@@ -33,7 +33,7 @@ export const BurgerConstructorSlice = createSlice({
           state.constructorItems.ingredients.push(payload); // Если добавляется ингредиент, добавляем его к остальным
         }
       },
-      // Присвоение ID ингридиенту перед добавлением в бургер, чтобы отличить от аналогичных ингридиентов
+      // Присвоение ID ингредиенту перед добавлением в бургер, чтобы отличить от аналогичных ингредиентов
       prepare: (ingredient: TIngredient) => {
         const id = nanoid();
         return { payload: { ...ingredient, id } };
@@ -58,7 +58,7 @@ export const BurgerConstructorSlice = createSlice({
         state.constructorItems.ingredients[currentIndex - 1] = action.payload;
       }
     },
-    // Методы для перемещения ингридиентов выше/ниже в бургере
+    // Методы для перемещения ингредиентов выше/ниже в бургере
     moveIngredientDown: (
       state,
       action: PayloadAction<TConstructorIngredient>
