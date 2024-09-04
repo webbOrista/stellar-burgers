@@ -1,7 +1,7 @@
-import { getIngredientsApi } from '@api';
+import { getIngredientsApi } from './../../../utils/burger-api';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { TIngredient } from '@utils-types';
-import { ERequestStatus } from '@utils-types';
+import { TIngredient } from './../../../utils/types';
+import { ERequestStatus } from './../../../utils/types';
 
 export const getIngredients = createAsyncThunk<TIngredient[]>(
   'ingredients/getIngredients',
@@ -11,11 +11,13 @@ export const getIngredients = createAsyncThunk<TIngredient[]>(
 type TIngredientsState = {
   data: TIngredient[];
   status: ERequestStatus;
+  error?: string | null;
 };
 
-const initialState: TIngredientsState = {
+export const initialState: TIngredientsState = {
   data: [],
-  status: ERequestStatus.Idle
+  status: ERequestStatus.Idle,
+  error: null
 };
 
 export const IngredientsSlice = createSlice({
@@ -26,13 +28,16 @@ export const IngredientsSlice = createSlice({
     builder
       .addCase(getIngredients.pending, (state) => {
         state.status = ERequestStatus.Loading;
+        state.error = null;
       })
       .addCase(getIngredients.fulfilled, (state, action) => {
         state.status = ERequestStatus.Success;
         state.data = action.payload;
+        state.error = null;
       })
-      .addCase(getIngredients.rejected, (state) => {
+      .addCase(getIngredients.rejected, (state, action) => {
         state.status = ERequestStatus.Failed;
+        state.error = action.error.message;
       });
   },
 
@@ -43,3 +48,5 @@ export const IngredientsSlice = createSlice({
 });
 
 export const IngredientsSelector = IngredientsSlice.selectors;
+
+export const IngredientsSliceReducer = IngredientsSlice.reducer;

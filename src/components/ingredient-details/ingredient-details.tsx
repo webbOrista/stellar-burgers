@@ -2,8 +2,8 @@ import { FC } from 'react';
 import { Preloader } from '../ui/preloader';
 import { IngredientDetailsUI } from '../ui/ingredient-details';
 import { useParams } from 'react-router-dom';
-import { IngredientsSelector } from '../../services/slices/ingredientsSlice';
-import { useSelector } from '../../services/store';
+import { IngredientsSelector } from '../../services/slices/ingredientsSlice/ingredientsSlice';
+import { useSelector } from '../../services/store/store';
 
 export const IngredientDetails: FC = () => {
   /** DONE: взять переменную из стора */

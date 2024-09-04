@@ -1,7 +1,15 @@
-import { getUserApi, loginUserApi, logoutApi, registerUserApi, TLoginData, TRegisterData, updateUserApi } from '@api';
+import {
+  getUserApi,
+  loginUserApi,
+  logoutApi,
+  registerUserApi,
+  TLoginData,
+  TRegisterData,
+  updateUserApi
+} from './../../../utils/burger-api';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { ERequestStatus, TUser } from '@utils-types';
-import { deleteCookie, setCookie } from '../../utils/cookie';
+import { ERequestStatus, TUser } from './../../../utils/types';
+import { deleteCookie, setCookie } from '../../../utils/cookie';
 
 export const getUser = createAsyncThunk(
   'user/get',
@@ -16,40 +24,40 @@ export const getUser = createAsyncThunk(
 
 export const registerUser = createAsyncThunk(
   'user/register',
-  async(data:TRegisterData,{rejectWithValue}) =>{
+  async (data: TRegisterData, { rejectWithValue }) => {
     const reply = await registerUserApi(data);
-    if (!reply.success){
+    if (!reply.success) {
       return rejectWithValue(data);
     }
-    setCookie('accessToken', reply.accessToken)
-    localStorage.setItem('refreshToken', reply.refreshToken)
+    setCookie('accessToken', reply.accessToken);
+    localStorage.setItem('refreshToken', reply.refreshToken);
     return reply;
   }
-)
+);
 
 export const loginUser = createAsyncThunk(
   'user/login',
-  async(data:TLoginData,{rejectWithValue}) =>{
+  async (data: TLoginData, { rejectWithValue }) => {
     const reply = await loginUserApi(data);
-    if (!reply.success){
+    if (!reply.success) {
       return rejectWithValue(data);
     }
-    setCookie('accessToken', reply.accessToken)
-    localStorage.setItem('refreshToken', reply.refreshToken)
+    setCookie('accessToken', reply.accessToken);
+    localStorage.setItem('refreshToken', reply.refreshToken);
     return reply.user;
   }
-)
+);
 
 export const updateUser = createAsyncThunk(
   'user/update',
-  async(user:TRegisterData,{rejectWithValue}) =>{
+  async (user: TRegisterData, { rejectWithValue }) => {
     const reply = await updateUserApi(user);
-    if (!reply.success){
+    if (!reply.success) {
       return rejectWithValue(reply);
     }
     return reply;
   }
-)
+);
 
 export const logoutUser = createAsyncThunk(
   'user/logout',
@@ -62,19 +70,20 @@ export const logoutUser = createAsyncThunk(
   }
 );
 
-
 type TUserState = {
   isAuthChecked: boolean;
   isAuthenticated: boolean;
   user: TUser | null;
   status: ERequestStatus;
+  error?: string | null;
 };
 
-const initialState: TUserState = {
+export const initialState: TUserState = {
   isAuthChecked: false,
   isAuthenticated: false,
   user: null,
-  status: ERequestStatus.Idle
+  status: ERequestStatus.Idle,
+  error: null
 };
 
 export const UserSlice = createSlice({
@@ -92,11 +101,13 @@ export const UserSlice = createSlice({
         state.isAuthenticated = true;
         state.user = action.payload.user;
         state.status = ERequestStatus.Success;
+        state.error = null;
       })
-      .addCase(getUser.rejected, (state) => {
+      .addCase(getUser.rejected, (state, action) => {
         state.isAuthChecked = true;
         state.isAuthenticated = false;
         state.status = ERequestStatus.Failed;
+        state.error = action.error.message;
       })
       .addCase(registerUser.pending, (state) => {
         state.isAuthChecked = false;
@@ -108,11 +119,13 @@ export const UserSlice = createSlice({
         state.isAuthenticated = true;
         state.user = action.payload.user;
         state.status = ERequestStatus.Success;
+        state.error = null;
       })
-      .addCase(registerUser.rejected, (state) => {
+      .addCase(registerUser.rejected, (state, action) => {
         state.isAuthChecked = true;
         state.isAuthenticated = false;
         state.status = ERequestStatus.Failed;
+        state.error = action.error.message;
       })
       .addCase(loginUser.pending, (state) => {
         state.isAuthChecked = false;
@@ -124,35 +137,45 @@ export const UserSlice = createSlice({
         state.isAuthenticated = true;
         state.user = action.payload;
         state.status = ERequestStatus.Success;
+        state.error = null;
       })
-      .addCase(loginUser.rejected, (state) => {
+      .addCase(loginUser.rejected, (state, action) => {
         state.isAuthChecked = true;
         state.isAuthenticated = false;
         state.status = ERequestStatus.Failed;
+        state.error = action.error.message;
       })
       .addCase(updateUser.pending, (state) => {
         state.status = ERequestStatus.Loading;
       })
       .addCase(updateUser.fulfilled, (state, action) => {
+        state.isAuthChecked = true;
+        state.isAuthenticated = true;
         state.user = action.payload.user;
         state.status = ERequestStatus.Success;
+        state.error = null;
       })
       .addCase(updateUser.rejected, (state, action) => {
         state.status = ERequestStatus.Failed;
+        state.error = action.error.message;
       })
       .addCase(logoutUser.pending, (state) => {
         state.isAuthChecked = true;
         state.isAuthenticated = true;
-        state.status = ERequestStatus.Failed;;
+        state.status = ERequestStatus.Loading;
       })
       .addCase(logoutUser.fulfilled, (state) => {
         state.isAuthChecked = true;
         state.isAuthenticated = false;
         state.user = null;
+        state.error = null;
+        state.status = ERequestStatus.Success;
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.isAuthChecked = true;
+        state.isAuthenticated = true;
         state.status = ERequestStatus.Failed;
+        state.error = action.error.message;
       });
   },
   selectors: {
@@ -164,3 +187,5 @@ export const UserSlice = createSlice({
 });
 
 export const UserSelector = UserSlice.selectors;
+
+export const UserSliceReducer = UserSlice.reducer;
