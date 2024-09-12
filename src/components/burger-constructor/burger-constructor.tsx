@@ -29,7 +29,7 @@ export const BurgerConstructor: FC = () => {
     if (location.pathname === '/') {
       dispatch(clearOrder());
     }
-  }, [location, dispatch]);
+  }, []);
 
   const onOrderClick = () => {
     if (!constructorItems.bun || orderRequest) return;
