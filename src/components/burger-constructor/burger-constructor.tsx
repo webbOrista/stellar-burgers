@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useEffect } from 'react';
 import { TConstructorIngredient } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
 import { useDispatch, useSelector } from '../../services/store/store';
@@ -6,7 +6,7 @@ import {
   clearIngredients,
   getConstructorItems
 } from '../../services/slices/burgerConstructorSlice/burgerConstructorSlice';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { UserSelector } from '../../services/slices/userSlice/userSlice';
 import {
   clearOrder,
@@ -19,11 +19,17 @@ export const BurgerConstructor: FC = () => {
   const orderRequest = useSelector(orderRequestSelector);
   const orderModalData = useSelector(orderDataSelector);
   const constructorItems = useSelector(getConstructorItems);
-
+  const location = useLocation();
   const dispatch = useDispatch();
   const isAuthenticated = useSelector(UserSelector.isAuthenticatedSelector);
   const user = useSelector(UserSelector.userDataSelector);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (location.pathname === '/') {
+      dispatch(clearOrder());
+    }
+  }, [location, dispatch]);
 
   const onOrderClick = () => {
     if (!constructorItems.bun || orderRequest) return;
